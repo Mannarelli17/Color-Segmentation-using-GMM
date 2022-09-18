@@ -1,1 +1,1 @@
-# Color-Segmentation-using-GMM
+# Color-Segmentation-using-Gaussian-Mixture-Model
