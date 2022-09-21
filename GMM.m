@@ -7,14 +7,14 @@ function [cluster, d] = GMM
     %train
     path=dir('/Users/jeffreyzhang/Documents/MATLAB/CMSC426/jzhang45_proj1/train_images/*.jpg');
     orange_pixels = loadingData(path);
-    [scaling_factor, gaussian_mean, covariance] = trainGMM(orange_pixels, K);
+    [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels, K);
     
     %test
     path=dir('/Users/jeffreyzhang/Documents/MATLAB/CMSC426/jzhang45_proj1/test_images/*.jpg');
     orange_pixels = loadingData(path);
-    cluster = testGMM(scaling_factor, gaussian_mean, covariance, orange_pixels, tau);
+    cluster = testGMM(scaling_factors, gaussian_means, covariances, orange_pixels, tau);
     d = measureDepth(cluster);
-    plotGMM(scaling_factor, gaussian_mean, covariance);
+    plotGMM(scaling_factors, gaussian_means, covariances);
 end
 
 function orange_pixels = loadingData(path)
