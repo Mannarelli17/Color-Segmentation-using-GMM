@@ -1,20 +1,18 @@
-function [cluster, d] = GMM(training)
+function [cluster, d] = GMM
     %set these to something else
     tau = 0;
     K = 0;
-    scaling_factor = 0;
-    gaussian_mean = 0;
-    covariance = 0;
     %Need to figure out how to store the model
-    if training == true
-        path=dir('/Users/jeffreyzhang/Documents/MATLAB/CMSC426/jzhang45_proj1/train_images/*.jpg');
-        orange_pixels = loadingData(path);
-     [scaling_factor, gaussian_mean, covariance] = trainGMM(orange_pixels, K);
-    else
-        path=dir('/Users/jeffreyzhang/Documents/MATLAB/CMSC426/jzhang45_proj1/test_images/*.jpg');
-        orange_pixels = loadingData(path);
-        cluster = testGMM(scaling_factor, gaussian_mean, covariance, orange_pixels, tau);
-    end
+    
+    %train
+    path=dir('/Users/jeffreyzhang/Documents/MATLAB/CMSC426/jzhang45_proj1/train_images/*.jpg');
+    orange_pixels = loadingData(path);
+    [scaling_factor, gaussian_mean, covariance] = trainGMM(orange_pixels, K);
+    
+    %test
+    path=dir('/Users/jeffreyzhang/Documents/MATLAB/CMSC426/jzhang45_proj1/test_images/*.jpg');
+    orange_pixels = loadingData(path);
+    cluster = testGMM(scaling_factor, gaussian_mean, covariance, orange_pixels, tau);
     d = measureDepth(cluster);
     plotGMM(scaling_factor, gaussian_mean, covariance);
 end
