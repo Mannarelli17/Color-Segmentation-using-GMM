@@ -33,12 +33,18 @@ mu = transpose(mean(op));
 % find covariance matrix
 Sigma = cov(double(op));
 
+display(Sigma)
+
 % x is test pixel
 x = [203 ; 200 ; 193];
 prior = 0.5;
 
 % find probability of color given pixel values
-exp(-0.5*transpose(x - mu)*inv(Sigma)*(x-mu))/sqrt(det(Sigma)*(2*pi)^3)*prior
+likelihood = exp(-0.5*transpose(x - mu)*inv(Sigma)*(x-mu))/sqrt(det(Sigma)*(2*pi)^3);
+
+posterior = likelihood*prior;
+
+display(posterior);
 
 
 
