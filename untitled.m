@@ -1,4 +1,2 @@
-
-x = double(op(1,:));
-y = double(op(2,:));
-cov(x,y)
+A = [1 1 1 ; 1 2 2 ; 1 3 3];
+cov(A)
