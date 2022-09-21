@@ -3,7 +3,7 @@ path=dir('./train_images/*.jpg');
 %convert stack to store R,G,B channels of entire dataset
 op = zeros(1,3);
 
-for i=1:1
+for i=1:length(path)
     %read the image
     image = imread(fullfile(path(i).folder, path(i).name));
 
@@ -40,7 +40,7 @@ x = [203 ; 200 ; 193];
 prior = 0.5;
 
 % find probability of color given pixel values
-likelihood = exp(-0.5*transpose(x - mu)*inv(Sigma)*(x-mu))/sqrt(det(Sigma)*(2*pi)^3);
+likelihood = exp(-0.5*transpose(x - mu)*(Sigma\(x-mu)))/sqrt(det(Sigma)*(2*pi)^3);
 
 posterior = likelihood*prior;
 
