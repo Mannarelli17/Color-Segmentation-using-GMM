@@ -1,37 +1,56 @@
+
 %read all the files in the directory
-path=dir('/Users/jeffreyzhang/Documents/MATLAB/CMSC426/jzhang45_proj1/train_images/*.jpg');
+path=dir('./train_images/*.jpg');
 %convert stack to store R,G,B channels of entire dataset
-%imageStack=zeros(1,3);
-orange_pixels = zeros(1,3);
-%imageStack_lab=zeros(1,3);
-for i=1:length(path)
-    imagePath=fullfile(path(1).folder, path(1).name);
+op = zeros(1,3);
+
+for i=1:1
     %read the image
-    image = imread(imagePath);
+    image = imread(fullfile(path(i).folder, path(i).name));
+    %thresholding with roipoly
     BW_image = roipoly(image);
     image(repmat(~BW_image,[1 1 3])) = 0;
     image=reshape(image,640*480,3);
+    % masking, collecting the vectors 
     for pixel = 1:(640*480)
          if BW_image(pixel) == 1
-             orange_pixels = vertcat(orange_pixels,image(pixel,:));
+             op = vertcat(op,image(pixel,:));
          end
     end 
     %mu = mean(orange_pixels);
 end
 
+% delete the forst row of pure zeros we used earlier
+op(1, :) = [];
+
 %Change threshold to something else
 tau = 0;
 
-mu = mean(orange_pixels);
-Sigma = cov(orange_pixels);
-%Sigma_inv = inv(Sigma);
-cov_det = det(Sigma);
-orange_pixels_trans = transpose(orange_pixels);
+mu = mean(op);
 
-p_x = 0.5;
-p_x_orange = exp(-0.5*orange_pixels_trans*Sigma\orange_pixels)/sqrt(cov_det*(2*pi)^3);
+r = double(op(:, 1));
+g = double(op(:, 2));
+b = double(op(:, 3));
 
-p_orange_x = p_x*p_x_orange;
+rr = cov(r,r);
+gg = cov(g,g);
+bb = cov(b,b);
+rg = cov(r,g);
+rb = cov(r,b);
+gb = cov(g,b);
+
+Sigma = transpose([rr rg rb 
+                   rg gg gb 
+                   rb gb bb]);
+display(Sigma)
+% Sigma = cov(orange_pixels);
+% %Sigma_inv = inv(Sigma);
+% orange_pixels_trans = transpose(orange_pixels);
+% 
+% p_x = 0.5;
+% p_x_orange = exp(-0.5*orange_pixels_trans*Sigma\orange_pixels)/sqrt(det(Sigma)*(2*pi)^3);
+% 
+% p_orange_x = p_x*p_x_orange;
 
 
 
