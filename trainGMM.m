@@ -23,10 +23,10 @@ function [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels
         % find alphas (store as 1xn vector)
         for j = 1:n
             i = ceil(j/k); 
-            x = orange_pixels(j);
+            x = transpose(orange_pixels(j));
             S = covariances(i);
             pi_i = scaling_factors(i);
-            mu = gaussian_means(i);
+            mu = transpose(gaussian_means(i));
             alpha_ij = pi_i*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
             alpha_denom = alphaDenominator(scaling_factors,gaussian_means, covariances, k, x);
             alpha_ij = alpha_ij/alpha_denom;
@@ -90,7 +90,7 @@ function total  = alphaDenominator(scaling_factors,gaussian_means, covariances, 
     total = 0;
     for i = 1:k
         S = covariances(i);
-        mu = gaussian_means(i);
+        mu = transpose(gaussian_means(i));
         total = total + scaling_factors(i)*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
     end
 end
