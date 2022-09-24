@@ -17,7 +17,6 @@ function [cluster, d] = GMM
     cluster = testGMM(scaling, factors, gaussian_means, covariances, pixels, tau);
     cluster = testGMM(scaling, factors, gaussian_means, covariances, pixels, tau);
     cluster = testGMM(scaling_factors, gaussian_means, covariances, pixels, tau);
->>>>>>> refs/remotes/origin/main
     d = measureDepth(cluster);
     plotGMM(scaling_factors, gaussian_means, covariances);
 end
