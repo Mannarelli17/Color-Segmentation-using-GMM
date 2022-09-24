@@ -46,3 +46,23 @@ function [gausian_means, covariances] = clusterParameters(orange_pixels, k)
     end
     
 end
+
+
+% Maximization step / M-step
+        % update the values (want to maintain matrix/vector structures)
+        updated = 0;
+        for i = 1:k
+            gaussian_means(:,:,i) = sum(transpose(alphas).*orange_pixels)/sum(alphas);
+            covariances(:,:,i) = covarianceNumerator(alphas, orange_pixels,gaussian_means(i))/sum(alphas);
+            if i < k
+                scaling_factors(i) = sum(alphas(updated + 1: updated + split_amount))/n;
+                updated = updated + split_amount;
+            else
+                scaling_factors(i) = sum(alphas(updated + 1: n))/n;
+            end
+        end
+        if(abs(sum(sum(prev_means)) - sum(sum(gaussian_means))) <= tau)
+            break;
+        end
+        prev_means = gaussian_means;
+        itr = itr + 1;
