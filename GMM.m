@@ -2,7 +2,7 @@ function [cluster, d] = GMM
     % let tau be our threshold
     tau = 0;
     % let K be the number of clusters
-    K = 0;
+    K = 5;
     
     % training step
     % gather all orange pixels in a list of RGB vectors
@@ -14,7 +14,7 @@ function [cluster, d] = GMM
     %test (might have to change this to include non orange samples)
     path=dir('./test_images/*.jpg');
     pixels = loadingDataTest(path);
-    cluster = testGMM(scaling _factors, gaussian_means, covariances, pixels, tau);
+    cluster = testGMM(scaling, factors, gaussian_means, covariances, pixels, tau);
     d = measureDepth(cluster);
     plotGMM(scaling_factors, gaussian_means, covariances);
 end

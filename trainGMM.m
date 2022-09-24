@@ -2,17 +2,28 @@ function [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels
     %set epsilon/ tau to something else
     tau = 0;
 
+    % get the means and covariances of the clusters
+    % [gaussian_means, covariances] = clusterParameters(orange_pixels, k);
+    
     % initialization step: we randomly choose the coefficients
     % coefficients: [mu, Sigma, pi]
     % initialize pi_i to be 1/k
-    scaling_factors = ones(k,1)/k;
-    %get the means and covariances of the clusters
-    [gaussian_means, covariances] = clusterParameters(orange_pixels, k);
+    scaling_factors = ones(1, k) / k;
+    covariances = zeros(3,3,k);
+    gaussian_means = zeros(3,1,k);
+    for q = 1:k
+        covariances(:,:,q) = rand(3,3);
+        gaussian_means(:,:,q) = rand(3,1);
+    end
+
     prev_means = gaussian_means;
 
+    % returns # of pixels + their length so we 
     n = size(orange_pixels);
+    % retrieve just the length of the matrix
     n = n(1);
-    split_amount = floor(n/k);
+
+    % initialize alphas
     alphas = zeros(n,1);
     % set max_iters to something else or change the condition of the while
     % to 1 (true)
@@ -22,12 +33,15 @@ function [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels
         % Expectation step / E-step
         % find alphas (store as 1xn vector)
         for j = 1:n
-            i = ceil(j/k); 
-            x = orange_pixels(j);
-            S = covariances(i);
-            pi_i = scaling_factors(i);
-            mu = gaussian_means(i);
-            alpha_ij = pi_i*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
+            i = ceil(j/k); % which cluster does this alpha belong to
+            x = orange_pixels(j); % current pixel
+            S = covariances(i); % current cluster covariance
+            pi = scaling_factors(i); % current cluster scaling factor
+            mu = gaussian_means(i); % current cluster mean
+
+            display(mu);
+
+            alpha_ij = pi*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
             alpha_denom = alphaDenominator(scaling_factors,gaussian_means, covariances, k, x);
             alpha_ij = alpha_ij/alpha_denom;
             alphas(i) = alpha_ij;
