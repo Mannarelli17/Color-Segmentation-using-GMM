@@ -14,9 +14,8 @@ function [cluster, d] = GMM
     %test (might have to change this to include non orange samples)
     path=dir('./test_images/*.jpg');
     pixels = loadingDataTest(path);
-    cluster = testGMM(scaling, factors, gaussian_means, covariances, pixels, tau);
-    cluster = testGMM(scaling, factors, gaussian_means, covariances, pixels, tau);
     cluster = testGMM(scaling_factors, gaussian_means, covariances, pixels, tau);
+    display(cluster);
     d = measureDepth(cluster);
     plotGMM(scaling_factors, gaussian_means, covariances);
 end
@@ -49,14 +48,19 @@ end
 function pixels = loadingDataTest(path)
     pixels = zeros(1,3);
     %maybe test for 1 image at a time
-    for i=1:length(path)
+    %length(path)
+    for i=1:1
         imagePath=fullfile(path(i).folder, path(i).name);
         %read the image
         image = imread(imagePath);
         BW_image = roipoly(image);
         image(repmat(~BW_image,[1 1 3])) = 0;
         image=reshape(image,640*480,3);
-        pixels = [pixels;image]
+        for pixel = 1:(640*480)
+            if BW_image(pixel) == 1
+                pixels = vertcat(pixels,image(pixel,:));
+            end
+        end 
     end
     pixels(1, :) = [];
 end
