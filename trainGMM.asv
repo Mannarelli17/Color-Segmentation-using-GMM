@@ -34,10 +34,10 @@ function [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels
         % find alphas (store as 1xn vector)
         for j = 1:n
             i = ceil(j/k); % which cluster does this alpha belong to
-            x = double(transpose(orange_pixels(j, :))); % current pixel
+            x = transpose(orange_pixels(j, :)); % current pixel
             S = covariances(:,:,i); % current cluster covariance
             pi = scaling_factors(i); % current cluster scaling factor
-            mu = double(gaussian_means(:,:,j)); % current cluster mean
+            mu = transpose(gaussian_means(:,:,j)); % current cluster mean
 
             display(x);
             display(mu);
