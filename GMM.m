@@ -14,11 +14,7 @@ function [cluster, d] = GMM
     %test (might have to change this to include non orange samples)
     path=dir('./test_images/*.jpg');
     pixels = loadingDataTest(path);
-<<<<<<< HEAD
-
     cluster = testGMM(scaling, factors, gaussian_means, covariances, pixels, tau);
-
-=======
     cluster = testGMM(scaling, factors, gaussian_means, covariances, pixels, tau);
     cluster = testGMM(scaling_factors, gaussian_means, covariances, pixels, tau);
 >>>>>>> refs/remotes/origin/main

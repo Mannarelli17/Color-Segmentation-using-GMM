@@ -43,15 +43,12 @@ function [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels
             display(mu);
 
             alpha_ij = pi*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
-<<<<<<< HEAD
-=======
             i = ceil(j/k); 
             x = transpose(orange_pixels(j));
             S = covariances(i);
             pi_i = scaling_factors(i);
             mu = transpose(gaussian_means(i));
             alpha_ij = pi_i*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
->>>>>>> refs/remotes/origin/main
             alpha_denom = alphaDenominator(scaling_factors,gaussian_means, covariances, k, x);
             alpha_ij = alpha_ij/alpha_denom;
             alphas(i) = alpha_ij;
