@@ -46,6 +46,18 @@ posterior = likelihood*prior;
 
 display(posterior);
 
+%Test images to show the orange ball clustered in each image
+for images = 1:length(path)
+    image_path = fullfile(path(images).folder, path(images).name);
+    [filepath,name,ext] = fileparts(image_path);
 
+    image = imread(image_path);
+    img_lab = rgb2lab(image);
+    BW = (img_lab(:,:,1)>=20)&(img_lab(:,:,1)<=90)&(img_lab(:,:,2)>=15)...
+        &(img_lab(:,:,2)<=50)&(img_lab(:,:,3)>=10)&(img_lab(:,:,3)<=45);
+    stats = regionprops('table',BW,'Centroid',...
+    'MajorAxisLength','MinorAxisLength');
+    imshow(BW)
+end
 
 
