@@ -10,14 +10,21 @@ function cluster = testGMM(scaling_factors, gaussian_means, covariances, pixels,
     %apologies if i and j don't match exact as it does in the description
     %(swapped)
     for i = 1:n
-        x = transpose(pixels(i));
+        x = double(transpose(pixels(i, :)));
         p_x_cl = 0;
         for j = 1:k
-           mu = transpose(gaussian_means(j));
-           S = covariances(j);
+           mu = double(gaussian_means(:,:,j));
+           S = covariances(:,:,j);
+           display(x);
+           display(mu);
+           display(S);
+           display(det(S));
+           display(scaling_factors(j));
+           display(exp(-0.5*transpose(x - mu)*(S\(x-mu))));
            p_x_cl = p_x_cl + scaling_factors(j)*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
         end
         posterior = p_x_cl*prior;
+        display(posterior);
         if(posterior >= tau)
             cluster(i) = 1;
         end
