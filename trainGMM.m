@@ -8,11 +8,11 @@ function [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels
     % initialization step: we randomly choose the coefficients
     % coefficients: [mu, Sigma, pi]
     % initialize pi_i to be 1/k
-    scaling_factors = ones(1, k) / k;
+    scaling_factors = ones(1, k)/k;
     covariances = zeros(3,3,k);
     gaussian_means = zeros(3,1,k);
     for q = 1:k
-        covariances(:,:,q) = rand(3,3);
+        covariances(:,:,q) = cov(double(orange_pixels));
         gaussian_means(:,:,q) = rand(3,1);
     end
     display(gaussian_means);
@@ -22,13 +22,13 @@ function [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels
     n = size(orange_pixels);
     % retrieve just the length of the matrix
     n = n(1);
-
+    split_amount = floor(n/k);
     % initialize alphas
     alphas = zeros(n,1);
     % set max_iters to something else or change the condition of the while
     % to 1 (true)
     itr = 0;
-    max_iters = 10000;
+    max_iters = 1;
     while(itr < max_iters)
         % Expectation step / E-step
         % find alphas (store as 1xn vector)
@@ -41,19 +41,26 @@ function [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels
 
             display(x);
             display(mu);
-
-           
+            
             alpha_ij = pi_i*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
+            %display(alpha_ij);
             alpha_denom = alphaDenominator(scaling_factors,gaussian_means, covariances, k, x);
             alpha_ij = alpha_ij/alpha_denom;
             alphas(j) = alpha_ij;
+            
+            display(alpha_ij);
         end
         % Maximization step / M-step
         % update the values (want to maintain matrix/vector structures)
         updated = 0;
         for i = 1:k
-            gaussian_means(i) = sum(transpose(alphas).*orange_pixels)/sum(alphas);
-            covariances(i) = covarianceNumerator(alphas, orange_pixels,gaussian_means(i))/sum(alphas);
+            display(alphas)
+            display(transpose(alphas))
+            display(size(orange_pixels))
+            display(alphas.*double(orange_pixels))
+            gaussian_means(:,:,i) = sum(alphas.*double(orange_pixels))/sum(alphas);
+            display(gaussian_means(:,:,i))
+            covariances(:,:,i) = covarianceNumerator(alphas, orange_pixels,gaussian_means(:,:,i))/sum(alphas);
             if i < k
                 scaling_factors(i) = sum(alphas(updated + 1: updated + split_amount))/n;
                 updated = updated + split_amount;
@@ -101,6 +108,7 @@ function [gaussian_means, covariances] = clusterParameters(orange_pixels, k)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function total  = alphaDenominator(scaling_factors,gaussian_means, covariances, k, x)
     total = 0;
     for i = 1:k
@@ -116,8 +124,9 @@ function total = covarianceNumerator(alphas, orange_pixels,mu_i)
     total = zeros(3,3);
     n = size(orange_pixels);
     for i = 1:n
-        xj = orange_pixels(i);
+        xj = double(orange_pixels(i,:));
         temp = xj - mu_i;
-        total = totals + alphas(i)*temp*transpose(temp);
+        total = total + alphas(i)*temp*transpose(temp);
     end
+   display(total);
 end
