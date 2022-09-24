@@ -33,25 +33,20 @@ function [scaling_factors, gaussian_means, covariances] = trainGMM(orange_pixels
         % Expectation step / E-step
         % find alphas (store as 1xn vector)
         for j = 1:n
-            i = ceil(j/k); % which cluster does this alpha belong to
+            i = ceil(j*k/n); % which cluster does this alpha belong to
             x = double(transpose(orange_pixels(j, :))); % current pixel
             S = covariances(:,:,i); % current cluster covariance
-            pi = scaling_factors(i); % current cluster scaling factor
-            mu = double(gaussian_means(:,:,j)); % current cluster mean
+            pi_i = scaling_factors(i); % current cluster scaling factor
+            mu = double(gaussian_means(:,:,i)); % current cluster mean
 
             display(x);
             display(mu);
 
-            alpha_ij = pi*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
-            i = ceil(j/k); 
-            x = transpose(orange_pixels(j));
-            S = covariances(i);
-            pi_i = scaling_factors(i);
-            mu = transpose(gaussian_means(i));
+           
             alpha_ij = pi_i*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
             alpha_denom = alphaDenominator(scaling_factors,gaussian_means, covariances, k, x);
             alpha_ij = alpha_ij/alpha_denom;
-            alphas(i) = alpha_ij;
+            alphas(j) = alpha_ij;
         end
         % Maximization step / M-step
         % update the values (want to maintain matrix/vector structures)
@@ -106,12 +101,11 @@ function [gaussian_means, covariances] = clusterParameters(orange_pixels, k)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 function total  = alphaDenominator(scaling_factors,gaussian_means, covariances, k, x)
     total = 0;
     for i = 1:k
-        S = covariances(i);
-        mu = transpose(gaussian_means(i));
+        S = covariances(:,:,i);
+        mu = double(gaussian_means(:,:,i));
         total = total + scaling_factors(i)*exp(-0.5*transpose(x - mu)*(S\(x-mu)))/sqrt(det(S)*(2*pi)^3);
     end
 end
