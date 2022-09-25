@@ -14,9 +14,7 @@ function [cluster, d] = GMM
     %test (might have to change this to include non orange samples)
     path=dir('./test_images/*.jpg');
     pixels = loadingDataTest(path);
-
     cluster = testGMM(scaling, factors, gaussian_means, covariances, pixels, tau);
-
     d = measureDepth(cluster);
     plotGMM(scaling_factors, gaussian_means, covariances);
 end
