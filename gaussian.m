@@ -3,7 +3,7 @@ path=dir('./train_images/*.jpg');
 %convert stack to store R,G,B channels of entire dataset
 op = zeros(1,3);
 
-for i=1:length(path)
+for i=1:size(path)
     %read the image
     image = imread(fullfile(path(i).folder, path(i).name));
 
@@ -18,33 +18,49 @@ for i=1:length(path)
              op = vertcat(op,image(pixel,:));
          end
     end 
-    %mu = mean(orange_pixels);
 end
 
 % delete the forst row of pure zeros we used earlier
 op(1, :) = [];
 
-%Change threshold to something else
-tau = 0;
-
 % find mu
 mu = transpose(mean(op));
 
 % find covariance matrix
-Sigma = cov(double(op));
+sigma = cov(double(op));
 
-display(Sigma)
+tau = .0000001;
 
-% x is test pixel
-x = [203 ; 200 ; 193];
-prior = 0.5;
+% testing portion of single gaussian
 
-% find probability of color given pixel values
-likelihood = exp(-0.5*transpose(x - mu)*(Sigma\(x-mu)))/sqrt(det(Sigma)*(2*pi)^3);
+path=dir('./test_images/*.jpg');
 
-posterior = likelihood*prior;
+for i = 1:length(path) % iterate through every image
 
-display(posterior);
+    imagePath=fullfile(path(i).folder, path(i).name);
+    %read the image
+    image = imread(imagePath);
+    n = size(image,1);
+    m = size(image,2);
+    image=transpose(reshape(image,n*m,3));
+
+    for j = 1:(n*m) % iterate through every pixel
+        x = double(image(:,j)); % this is the current pixel of the current test image
+        prob = p(x, sigma, mu);
+        if prob < tau
+            image(:,j) = [255;255;255];
+        end
+    end
+    image = reshape(transpose(image),n,m,3);
+    imshow(image);
+end
+
+
+function posterior = p(x, sigma, mu)
+    lh = exp(-0.5*transpose(x - mu)*(sigma\(x-mu)))/sqrt(det(sigma)*(2*pi)^3);
+    prior = 0.5; % uniform distribution
+    posterior = lh*prior;
+end
 
 
 

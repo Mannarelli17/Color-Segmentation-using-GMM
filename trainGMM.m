@@ -17,7 +17,6 @@ function [pi_, mean_, cov_] = gmm_train(x, k)
 
 	%initializing covariance(m x m x k matrix)
 	cov_ = 100*(reshape(repmat(diag(ones(m,1)),1,k),[m, m, k]));
-    display(cov_);
 
 	%posteriors(n x k matrix)
 	posteriors = zeros(n,k); % n pixels per k clusters
@@ -31,10 +30,9 @@ function [pi_, mean_, cov_] = gmm_train(x, k)
 		for i = 1:k
             % calculates each posterior, each pixel gets one per cluster
             % grabbing the variables per cluster
-
 			mu = mean_(:, i); % grabbing the ith 3x1 vector
             sigma = cov_(:, :, i);
-            scale = pi_(:, i);
+            scale = pi_(i);
             numerator = 0;
             denominator = 0;
             % loop through each pixel
@@ -47,7 +45,7 @@ function [pi_, mean_, cov_] = gmm_train(x, k)
                 for g = 1:k
                 mu_d = mean_(:, g);
                 sigma_d = cov_(:, :, i);
-                scale_d = pi_(:, i);
+                scale_d = pi_(i);
                 denominator = denominator + scale_d*exp(-0.5*transpose(x - mu_d)*(sigma_d\(x-mu_d)))/sqrt(det(sigma_d)*(2*pi)^3);    
                 end
                 % display(numerator./denominator);
@@ -82,9 +80,7 @@ function [pi_, mean_, cov_] = gmm_train(x, k)
             cov_(:, :, i) = numerator/denominator;
 
             % new scaling factors
-            pi_(i) = sum(posteriors(:, i))/n;
-            display(pi_(i));
-            
+            pi_(i) = sum(posteriors(:, i))/n;    
         end
 
         norm(prev_mean - mean_)
