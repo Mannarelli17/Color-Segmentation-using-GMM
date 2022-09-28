@@ -34,7 +34,7 @@ function cluster = testGMM(pi_, mean_, cov_, tau, path)
                 image(:, j) = [0 ; 0 ; 0];
                    %display(image(:, j));
             else
-                image(:, j) = [255 ; 255 ; 255];
+                image(:, j) = [0 ; 0 ; 0];
             end
 
         end

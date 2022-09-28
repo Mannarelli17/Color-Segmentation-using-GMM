@@ -1,6 +1,6 @@
 function [cluster, d] = GMM
     % let tau be our threshold
-    tau = .0000001;
+    tau = 0.0000000000000000000000001;
     % let K be the number of clusters
     K = 5;
     
@@ -19,7 +19,7 @@ function [cluster, d] = GMM
     % display
     for t = 1:size(cluster, 4)
         figure(t);
-        imshow(cluster(:,:,:,t));
+        imshow(uint8(cluster(:,:,:,t)));
     end
 
     % d = measureDepth(cluster);
@@ -33,7 +33,7 @@ end
 function orange_pixels = loadingDataTrain(path)
     orange_pixels = zeros(1,3);
     % change back to length(path)
-    for i=1:length(path)
+    for i=1:4
         imagePath=fullfile(path(i).folder, path(i).name);
         %read the image
         image = imread(imagePath);
